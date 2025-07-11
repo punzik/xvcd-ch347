@@ -120,7 +120,7 @@ int ch347_open(dev_ctx *ch347_ctx)
             // Find Vendor Specific Class
             if (iface->altsetting[i].bInterfaceClass == 255) {
               ret = libusb_claim_interface(ch347_ctx->op_handle, iface->altsetting[i].bInterfaceNumber);
-              if (ret < 0) break;
+              if (ret == 0) break;
             }
         }
     }
