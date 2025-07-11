@@ -123,6 +123,8 @@ int ch347_open(dev_ctx *ch347_ctx)
               if (ret == 0) break;
             }
         }
+
+        if (ret == 0) break;
     }
 
     libusb_free_config_descriptor(cfg);
