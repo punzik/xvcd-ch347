@@ -308,13 +308,13 @@ int main(int argc, char **argv)
 
     ret = libusb_init(&ctx); // 初始化上下文
     if (ret != LIBUSB_SUCCESS) {
-        fprintf(stderr, "初始化失败: %s\n", libusb_error_name(ret));
+        fprintf(stderr, "Initialization failed: %s\n", libusb_error_name(ret));
         return -1;
     }
 
     ssize_t cnt = libusb_get_device_list(ctx, &devs); // 获取设备列表
     if (cnt < 0) {
-        fprintf(stderr, "设备枚举失败\n");
+        fprintf(stderr, "Device enumeration failed\n");
         libusb_exit(ctx);
         return -1;
     }
@@ -331,18 +331,18 @@ int main(int argc, char **argv)
             xvcd_dev[dev_index].dev_handle = dev;
             r = libusb_open(xvcd_dev[dev_index].dev_handle, &dev_handle);
             if (r < 0) {
-                fprintf(stderr, "打开设备失败: %s\n", libusb_error_name(r));
+                fprintf(stderr, "Failed to open device: %s\n", libusb_error_name(r));
                 libusb_free_device_list(devs, 1); // 释放设备列表
                 libusb_exit(ctx);                 // 退出libusb
                 break;
             }
             printf("Current index: %d\n", dev_index);
             r = libusb_get_string_descriptor_ascii(dev_handle, manu_idx, (unsigned char *)xvcd_dev[dev_index].usb_manu, sizeof(xvcd_dev[dev_index].usb_manu));
-            printf("厂商: %s\n", r > 0 ? xvcd_dev[dev_index].usb_manu : NA);
+            printf("Manufacturer: %s\n", r > 0 ? xvcd_dev[dev_index].usb_manu : NA);
             r = libusb_get_string_descriptor_ascii(dev_handle, product_idx, (unsigned char *)xvcd_dev[dev_index].usb_product, sizeof(xvcd_dev[dev_index].usb_product));
-            printf("产品: %s\n", r > 0 ? xvcd_dev[dev_index].usb_product : NA);
+            printf("Product: %s\n", r > 0 ? xvcd_dev[dev_index].usb_product : NA);
             r = libusb_get_string_descriptor_ascii(dev_handle, serial_idx, (unsigned char *)xvcd_dev[dev_index].usb_serial, sizeof(xvcd_dev[dev_index].usb_serial));
-            printf("序列号: %s\n", r > 0 ? xvcd_dev[dev_index].usb_serial : NA);
+            printf("Serial number: %s\n", r > 0 ? xvcd_dev[dev_index].usb_serial : NA);
 
             xvcd_dev[dev_index].usb_vid = desc.idVendor;
             xvcd_dev[dev_index].usb_pid = desc.idProduct;
