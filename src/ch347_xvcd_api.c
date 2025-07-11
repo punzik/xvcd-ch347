@@ -104,8 +104,29 @@ int ch347_open(dev_ctx *ch347_ctx)
     }
 
     // claim interface x
-    int interface_num = 4;
-    ret = libusb_claim_interface(ch347_ctx->op_handle, interface_num);
+    struct libusb_config_descriptor *cfg = NULL;
+
+    int rc = libusb_get_active_config_descriptor(ch347_ctx->dev_handle, &cfg);
+    if (rc != 0) {
+        printf("libusb_get_active_config_descriptor failed: %s\n", libusb_error_name(rc));
+        return rc;
+    }
+
+    ret = LIBUSB_ERROR_NOT_FOUND;
+    for (int n = 0; n < cfg->bNumInterfaces; n ++) {
+        const struct libusb_interface *iface = &cfg->interface[n];
+
+        for (int i = 0; i < iface->num_altsetting; i ++) {
+            // Find Vendor Specific Class
+            if (iface->altsetting[i].bInterfaceClass == 255) {
+              ret = libusb_claim_interface(ch347_ctx->op_handle, iface->altsetting[i].bInterfaceNumber);
+              if (ret < 0) break;
+            }
+        }
+    }
+
+    libusb_free_config_descriptor(cfg);
+
     if (ret < 0) {
         printf("libusb_claim_interface failed: %s\n", libusb_error_name(ret));
         return ret;
